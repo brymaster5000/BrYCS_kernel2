@@ -68,6 +68,8 @@ static inline void synchronize_rcu_bh_expedited(void)
 
 extern void rcu_barrier(void);
 
+extern void rcu_check_callbacks(int cpu, int user);
+
 extern unsigned long rcutorture_testseq;
 extern unsigned long rcutorture_vernum;
 extern long rcu_batches_completed(void);

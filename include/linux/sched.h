@@ -1845,6 +1845,7 @@ static inline void rcu_copy_process(struct task_struct *p)
 #ifdef CONFIG_RCU_BOOST
 	p->rcu_boost_mutex = NULL;
 #endif /* #ifdef CONFIG_RCU_BOOST */
+#endif
 	INIT_LIST_HEAD(&p->rcu_node_entry);
 }
 

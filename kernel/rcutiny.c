@@ -53,6 +53,14 @@ static void __call_rcu(struct rcu_head *head,
 
 #include "rcutiny_plugin.h"
 
+/* Forward declarations for rcutiny_plugin.h. */
+static void __rcu_process_callbacks(struct rcu_ctrlblk *rcp);
+static void __call_rcu(struct rcu_head *head,
+		       void (*func)(struct rcu_head *rcu),
+		       struct rcu_ctrlblk *rcp);
+
+#include "rcutiny_plugin.h"
+
 #ifdef CONFIG_NO_HZ
 
 static long rcu_dynticks_nesting = 1;
@@ -219,6 +227,9 @@ static int rcu_kthread(void *arg)
 	}
 
 	return 0;  /* Not reached, but needed to shut gcc up. */
+	__rcu_process_callbacks(&rcu_sched_ctrlblk);
+	__rcu_process_callbacks(&rcu_bh_ctrlblk);
+	rcu_preempt_process_callbacks();
 }
 
 /*
@@ -322,3 +333,6 @@ static int __init rcu_spawn_kthreads(void)
 	return 0;
 }
 early_initcall(rcu_spawn_kthreads);
+	open_softirq(RCU_SOFTIRQ, rcu_process_callbacks);
+}
+
