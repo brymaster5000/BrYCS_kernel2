@@ -62,6 +62,19 @@ static inline void exit_rcu(void)
 
 extern void synchronize_rcu_bh(void);
 extern void synchronize_sched_expedited(void);
+#ifdef CONFIG_TREE_PREEMPT_RCU
+
+extern void exit_rcu(void);
+
+#else /* #ifdef CONFIG_TREE_PREEMPT_RCU */
+
+static inline void exit_rcu(void)
+{
+}
+
+#endif /* #else #ifdef CONFIG_TREE_PREEMPT_RCU */
+
+extern void synchronize_rcu_bh(void);
 extern void synchronize_rcu_expedited(void);
 
 static inline void synchronize_rcu_bh_expedited(void)
