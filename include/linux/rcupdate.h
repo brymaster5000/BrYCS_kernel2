@@ -152,6 +152,64 @@ static inline void rcu_exit_nohz(void)
 
 #endif /* #else #ifdef CONFIG_NO_HZ */
 
+#ifdef CONFIG_PREEMPT_RCU
+
+/*
+ * Defined as a macro as it is a very low level header included from
+ * areas that don't even know about current.  This gives the rcu_read_lock()
+ * nesting depth, but makes sense only if CONFIG_PREEMPT_RCU -- in other
+ * types of kernel builds, the rcu_read_lock() nesting depth is unknowable.
+ */
+#define rcu_preempt_depth() (current->rcu_read_lock_nesting)
+
+#else /* #ifdef CONFIG_PREEMPT_RCU */
+
+static inline void __rcu_read_lock(void)
+{
+	preempt_disable();
+}
+
+static inline void __rcu_read_unlock(void)
+{
+	preempt_enable();
+}
+
+static inline void synchronize_rcu(void)
+{
+	synchronize_sched();
+}
+
+static inline int rcu_preempt_depth(void)
+{
+	return 0;
+}
+
+#endif /* #else #ifdef CONFIG_PREEMPT_RCU */
+
+/* Internal to kernel */
+extern void rcu_init(void);
+extern void rcu_sched_qs(int cpu);
+extern void rcu_bh_qs(int cpu);
+extern void rcu_check_callbacks(int cpu, int user);
+struct notifier_block;
+
+#ifdef CONFIG_NO_HZ
+
+extern void rcu_enter_nohz(void);
+extern void rcu_exit_nohz(void);
+
+#else /* #ifdef CONFIG_NO_HZ */
+
+static inline void rcu_enter_nohz(void)
+{
+}
+
+static inline void rcu_exit_nohz(void)
+{
+}
+
+#endif /* #else #ifdef CONFIG_NO_HZ */
+
 #if defined(CONFIG_TREE_RCU) || defined(CONFIG_TREE_PREEMPT_RCU)
 #include <linux/rcutree.h>
 #elif defined(CONFIG_TINY_RCU) || defined(CONFIG_TINY_PREEMPT_RCU)
