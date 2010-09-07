@@ -98,6 +98,7 @@ static void print_one_rcu_data(struct seq_file *m, struct rcu_data *rdp)
 		   per_cpu(rcu_cpu_kthread_loops, rdp->cpu) & 0xffff);
 #endif /* #ifdef CONFIG_RCU_BOOST */
 	seq_printf(m, " b=%ld", rdp->blimit);
+	seq_printf(m, " ql=%ld b=%ld", rdp->qlen, rdp->blimit);
 	seq_printf(m, " ci=%lu co=%lu ca=%lu\n",
 		   rdp->n_cbs_invoked, rdp->n_cbs_orphaned, rdp->n_cbs_adopted);
 }
@@ -169,6 +170,7 @@ static void print_one_rcu_data_csv(struct seq_file *m, struct rcu_data *rdp)
 					  rdp->cpu)));
 #endif /* #ifdef CONFIG_RCU_BOOST */
 	seq_printf(m, ",%ld", rdp->blimit);
+	seq_printf(m, ",%ld,%ld", rdp->qlen, rdp->blimit);
 	seq_printf(m, ",%lu,%lu,%lu\n",
 		   rdp->n_cbs_invoked, rdp->n_cbs_orphaned, rdp->n_cbs_adopted);
 }
@@ -184,6 +186,7 @@ static int show_rcudata_csv(struct seq_file *m, void *unused)
 	seq_puts(m, "\"kt\",\"ktl\"");
 #endif /* #ifdef CONFIG_RCU_BOOST */
 	seq_puts(m, ",\"b\",\"ci\",\"co\",\"ca\"\n");
+	seq_puts(m, "\"of\",\"ri\",\"ql\",\"b\",\"ci\",\"co\",\"ca\"\n");
 #ifdef CONFIG_TREE_PREEMPT_RCU
 	seq_puts(m, "\"rcu_preempt:\"\n");
 	PRINT_RCU_DATA(rcu_preempt_data, print_one_rcu_data_csv, m);
