@@ -197,9 +197,9 @@ static void rcu_preempt_cpu_qs(void)
 	if (!rcu_preempt_blocked_readers_any())
 		rcu_preempt_ctrlblk.rcb.donetail = rcu_preempt_ctrlblk.nexttail;
 
-	/* If there are done callbacks, make RCU_SOFTIRQ process them. */
+	/* If there are done callbacks, cause them to be invoked. */
 	if (*rcu_preempt_ctrlblk.rcb.donetail != NULL)
-		raise_softirq(RCU_SOFTIRQ);
+		invoke_rcu_cbs();
 }
 
 /*
@@ -407,7 +407,7 @@ static void rcu_preempt_check_callbacks(void)
 		rcu_preempt_cpu_qs();
 	if (&rcu_preempt_ctrlblk.rcb.rcucblist !=
 	    rcu_preempt_ctrlblk.rcb.donetail)
-		raise_softirq(RCU_SOFTIRQ);
+		invoke_rcu_cbs();
 	if (rcu_preempt_gp_in_progress() &&
 	    rcu_cpu_blocking_cur_gp() &&
 	    rcu_preempt_running_reader())
@@ -416,7 +416,7 @@ static void rcu_preempt_check_callbacks(void)
 
 /*
  * TINY_PREEMPT_RCU has an extra callback-list tail pointer to
- * update, so this is invoked from __rcu_process_callbacks() to
+ * update, so this is invoked from rcu_process_callbacks() to
  * handle that case.  Of course, it is invoked for all flavors of
  * RCU, but RCU callbacks can appear only on one of the lists, and
  * neither ->nexttail nor ->donetail can possibly be NULL, so there
@@ -433,7 +433,7 @@ static void rcu_preempt_remove_callbacks(struct rcu_ctrlblk *rcp)
  */
 static void rcu_preempt_process_callbacks(void)
 {
-	__rcu_process_callbacks(&rcu_preempt_ctrlblk.rcb);
+	rcu_process_callbacks(&rcu_preempt_ctrlblk.rcb);
 }
 
 /*
@@ -715,11 +715,13 @@ static struct rcu_preempt_ctrlblk rcu_preempt_ctrlblk = {
 
 static int rcu_preempted_readers_exp(void);
 static void rcu_report_exp_done(void);
+#include <linux/kernel_stat.h>
 
 /*
  * Return true if the CPU has not yet responded to the current grace period.
  */
 static int rcu_cpu_blocking_cur_gp(void)
+void __init rcu_scheduler_starting(void)
 {
 	return rcu_preempt_ctrlblk.gpcpu != rcu_preempt_ctrlblk.gpnum;
 }
