@@ -711,7 +711,3 @@ MODULE_DESCRIPTION("'cpufreq_interactive' - A cpufreq governor for "
 MODULE_LICENSE("GPL");
 
 
-<<<<<<< HEAD
-
-=======
->>>>>>> a6ef815... added OC and governers
