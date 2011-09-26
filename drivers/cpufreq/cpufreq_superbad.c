@@ -1,27 +1,27 @@
 /*
-* drivers/cpufreq/cpufreq_superbad.c
-*
-* Copyright (C) 2010 Google, Inc.
-*
-* This software is licensed under the terms of the GNU General Public
-* License version 2, as published by the Free Software Foundation, and
-* may be copied, distributed, and modified under those terms.
-*
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-* GNU General Public License for more details.
-*
-* Author: Erasmux
-*
-* Based on the interactive governor By Mike Chan (mike@android.com)
-* which was adaptated to 2.6.29 kernel by Nadlabak (pavel@doshaska.net)
-*
-* requires to add
-* EXPORT_SYMBOL_GPL(nr_running);
-* at the end of kernel/sched.c
-*
-*/
+ * drivers/cpufreq/cpufreq_superbad.c
+ *
+ * Copyright (C) 2010 Google, Inc.
+ *
+ * This software is licensed under the terms of the GNU General Public
+ * License version 2, as published by the Free Software Foundation, and
+ * may be copied, distributed, and modified under those terms.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * Author: Erasmux
+ *
+ * Based on the interactive governor By Mike Chan (mike@android.com)
+ * which was adaptated to 2.6.29 kernel by Nadlabak (pavel@doshaska.net)                     
+ * 
+ * requires to add
+ * EXPORT_SYMBOL_GPL(nr_running);
+ * at the end of kernel/sched.c
+ *
+ */
 
 #include <linux/cpu.h>
 #include <linux/cpumask.h>
@@ -66,42 +66,42 @@ enum {
 };
 
 /*
-* Combination of the above debug flags.
-*/
+ * Combination of the above debug flags.
+ */
 static unsigned long debug_mask;
 
 /*
-* The minimum amount of time to spend at a frequency before we can ramp up.
-*/
+ * The minimum amount of time to spend at a frequency before we can ramp up.
+ */
 #define DEFAULT_UP_RATE_US 10000;
 static unsigned long up_rate_us;
 
 /*
-* The minimum amount of time to spend at a frequency before we can ramp down.
-*/
+ * The minimum amount of time to spend at a frequency before we can ramp down.
+ */
 #define DEFAULT_DOWN_RATE_US 20000;
 static unsigned long down_rate_us;
 
 /*
-* When ramping up frequency with no idle cycles jump to at least this frequency.
-* Zero disables. Set a very high value to jump to policy max freqeuncy.
-*/
+ * When ramping up frequency with no idle cycles jump to at least this frequency.
+ * Zero disables. Set a very high value to jump to policy max freqeuncy.
+ */
 #define DEFAULT_UP_MIN_FREQ 1516800;
 static unsigned int up_min_freq;
 
 /*
-* When sleep_max_freq>0 the frequency when suspended will be capped
-* by this frequency. Also will wake up at max frequency of policy
-* to minimize wakeup issues.
-* Set sleep_max_freq=0 to disable this behavior.
-*/
+ * When sleep_max_freq>0 the frequency when suspended will be capped
+ * by this frequency. Also will wake up at max frequency of policy
+ * to minimize wakeup issues.
+ * Set sleep_max_freq=0 to disable this behavior.
+ */
 #define DEFAULT_SLEEP_MAX_FREQ 368640;
 static unsigned int sleep_max_freq;
 
 /*
-* The frequency to set when waking up from sleep.
-* When sleep_max_freq=0 this will have no effect.
-*/
+ * The frequency to set when waking up from sleep.
+ * When sleep_max_freq=0 this will have no effect.
+ */
 #define DEFAULT_SLEEP_WAKEUP_FREQ 1024000;
 static unsigned int sleep_wakeup_freq;
 
@@ -109,38 +109,38 @@ static unsigned int sleep_wakeup_freq;
 static unsigned int threshold_freq;
 
 /*
-* When awake_min_freq>0 the frequency when not suspended will not
-* go below this frequency.
-* Set awake_min_freq=0 to disable this behavior.
-*/
+ * When awake_min_freq>0 the frequency when not suspended will not
+ * go below this frequency.
+ * Set awake_min_freq=0 to disable this behavior.
+ */
 #define DEFAULT_AWAKE_MIN_FREQ 368640;
 static unsigned int awake_min_freq;
 
 static unsigned int suspendfreq = 400000;
 
 /*
-* Sampling rate, I highly recommend to leave it at 2.
-*/
+ * Sampling rate, I highly recommend to leave it at 2.
+ */
 #define DEFAULT_SAMPLE_RATE_JIFFIES 2
 static unsigned int sample_rate_jiffies;
 
 /*
-* Minimum Freqeuncy delta when ramping up.
-* zero disables and causes to always jump straight to max frequency.
-*/
+ * Minimum Freqeuncy delta when ramping up.
+ * zero disables and causes to always jump straight to max frequency.
+ */
 #define DEFAULT_RAMP_UP_STEP 384000
 static unsigned int ramp_up_step;
 
 /*
-* Miminum Freqeuncy delta when ramping down.
-* zero disables and will calculate ramp down according to load heuristic.
-*/
+ * Miminum Freqeuncy delta when ramping down.
+ * zero disables and will calculate ramp down according to load heuristic.
+ */
 #define DEFAULT_RAMP_DOWN_STEP 0
 static unsigned int ramp_down_step;
 
 /*
-* CPU freq will be increased if measured load > max_cpu_load;
-*/
+ * CPU freq will be increased if measured load > max_cpu_load;
+ */
 #define DEFAULT_MAX_CPU_LOAD 80
 static unsigned long max_cpu_load;
 
@@ -148,8 +148,8 @@ static unsigned long max_cpu_load;
 static unsigned long x_cpu_load;
 
 /*
-* CPU freq will be decreased if measured load < min_cpu_load;
-*/
+ * CPU freq will be decreased if measured load < min_cpu_load;
+ */
 #define DEFAULT_MIN_CPU_LOAD 30
 static unsigned long min_cpu_load;
 
@@ -173,9 +173,9 @@ struct cpufreq_governor cpufreq_gov_superbad = {
 static void superbad_update_min_max(struct superbad_info_s *this_superbad, struct cpufreq_policy *policy, int suspend) {
         if (suspend) {
                 this_superbad->min_speed = policy->min;
-this_superbad->max_speed = sleep_max_freq;
-// this_superbad->max_speed = // sleep_max_freq; but make sure it obeys the policy min/max
-// policy->max > sleep_max_freq ? (sleep_max_freq > policy->min ? sleep_max_freq : policy->min) : policy->max;
+		this_superbad->max_speed = sleep_max_freq;
+//                this_superbad->max_speed = // sleep_max_freq; but make sure it obeys the policy min/max
+//                        policy->max > sleep_max_freq ? (sleep_max_freq > policy->min ? sleep_max_freq : policy->min) : policy->max;
         } else {
                 this_superbad->min_speed = // awake_min_freq; but make sure it obeys the policy min/max
                         policy->min < awake_min_freq ? (awake_min_freq < policy->max ? awake_min_freq : policy->max) : policy->min;
@@ -202,8 +202,8 @@ static void cpufreq_superbad_timer(unsigned long data)
         u64 delta_time;
         int cpu_load;
         u64 update_time;
-   u64 now_idle;
-unsigned long new_rate;
+  	u64 now_idle; 	
+	unsigned long new_rate;
 
         struct superbad_info_s *this_superbad = &per_cpu(superbad_info, data);
         struct cpufreq_policy *policy = this_superbad->cur_policy;
@@ -251,12 +251,12 @@ unsigned long new_rate;
                 if (nr_running() < 1)
                         return;
 
-new_rate = up_rate_us;
+		new_rate = up_rate_us;
 
-// minimize going above 1.8Ghz
-if (policy->cur > up_min_freq) new_rate = 75000;
+		// minimize going above 1.8Ghz
+		if (policy->cur > up_min_freq) new_rate = 75000;
 
-                if (cputime64_sub(update_time, this_superbad->freq_change_time) < new_rate)
+                if (cputime64_sub(update_time, this_superbad->freq_change_time) < new_rate) 
                         return;
 
                 this_superbad->force_ramp_up = 1;
@@ -266,12 +266,12 @@ if (policy->cur > up_min_freq) new_rate = 75000;
         }
 
         /*
-* There is a window where if the cpu utlization can go from low to high
-* between the timer expiring, delta_idle will be > 0 and the cpu will
-* be 100% busy, preventing idle from running, and this timer from
-* firing. So setup another timer to fire to check cpu utlization.
-* Do not setup the timer if there is no scheduled work or if at max speed.
-*/
+         * There is a window where if the cpu utlization can go from low to high
+         * between the timer expiring, delta_idle will be > 0 and the cpu will
+         * be 100% busy, preventing idle from running, and this timer from
+         * firing. So setup another timer to fire to check cpu utlization.
+         * Do not setup the timer if there is no scheduled work or if at max speed.
+         */
         if (policy->cur < this_superbad->max_speed && !timer_pending(&this_superbad->timer) && nr_running() > 0)
                 reset_timer(data,this_superbad);
 
@@ -279,9 +279,9 @@ if (policy->cur > up_min_freq) new_rate = 75000;
                 return;
 
         /*
-* Do not scale down unless we have been at this frequency for the
-* minimum sample time.
-*/
+         * Do not scale down unless we have been at this frequency for the
+         * minimum sample time.
+         */
         if (cputime64_sub(update_time, this_superbad->freq_change_time) < down_rate_us)
                 return;
 
@@ -327,33 +327,33 @@ static void cpufreq_superbad_freq_change_time_work(struct work_struct *work)
                 this_superbad->force_ramp_up = 0;
 
                 if (force_ramp_up || cpu_load > max_cpu_load) {
-if (!suspended) {
-if (force_ramp_up && up_min_freq && policy->cur < up_min_freq) {
-// imoseyon - ramp up faster
+		  if (!suspended) {
+			if (force_ramp_up && up_min_freq && policy->cur < up_min_freq) {
+			  	// imoseyon - ramp up faster
                                 new_freq = up_min_freq;
                                 relation = CPUFREQ_RELATION_L;
-} else if (ramp_up_step) {
+			} else if (ramp_up_step) {
                                 new_freq = policy->cur + ramp_up_step;
                                 relation = CPUFREQ_RELATION_H;
                         } else {
                                 new_freq = this_superbad->max_speed;
                                 relation = CPUFREQ_RELATION_H;
                         }
-// try to minimize going above 1.8Ghz
-if ((new_freq > threshold_freq) && (cpu_load < 95)) {
-new_freq = threshold_freq;
-relation = CPUFREQ_RELATION_H;
-}
-} else {
-new_freq = policy->cur + 150000;
-if (new_freq > suspendfreq) new_freq = suspendfreq;
-relation = CPUFREQ_RELATION_H;
-}
-
+			// try to minimize going above 1.8Ghz
+			if ((new_freq > threshold_freq) && (cpu_load < 95)) {
+				new_freq = threshold_freq;
+				relation = CPUFREQ_RELATION_H;
+			}
+		  } else {
+			new_freq = policy->cur + 150000;
+			if (new_freq > suspendfreq) new_freq = suspendfreq; 	
+			relation = CPUFREQ_RELATION_H;
+		  }
+		
                 } else if (cpu_load < min_cpu_load) {
-if (cpu_load < rapid_min_cpu_load) {
-new_freq = awake_min_freq;
-} else if (ramp_down_step) {
+			if (cpu_load < rapid_min_cpu_load) {
+				new_freq = awake_min_freq;
+			} else if (ramp_down_step) {
                                   new_freq = policy->cur - ramp_down_step;
                         } else {
                                 cpu_load += 100 - max_cpu_load; // dummy load.
@@ -363,7 +363,7 @@ new_freq = awake_min_freq;
                 }
                 else new_freq = policy->cur;
 
-old_freq = policy->cur;
+		old_freq = policy->cur;
                 new_freq = validate_freq(this_superbad,new_freq);
 
                 if (new_freq != policy->cur) {
@@ -375,20 +375,20 @@ old_freq = policy->cur;
                         this_superbad->freq_change_time_in_idle =
                                 get_cpu_idle_time_us(cpu,&this_superbad->freq_change_time);
 
-if (relation == CPUFREQ_RELATION_L && old_freq == policy->cur) {
-// step down one more time
-new_freq = new_freq - 100000;
-__cpufreq_driver_target(policy, new_freq, relation);
-this_superbad->freq_change_time_in_idle =
-get_cpu_idle_time_us(cpu,&this_superbad->freq_change_time);
-}
-if (relation == CPUFREQ_RELATION_H && old_freq == policy->cur) {
-// step up one more time
-new_freq = new_freq + 100000;
-__cpufreq_driver_target(policy, new_freq, relation);
-this_superbad->freq_change_time_in_idle =
-get_cpu_idle_time_us(cpu,&this_superbad->freq_change_time);
-}
+			if (relation == CPUFREQ_RELATION_L && old_freq == policy->cur) {
+			  // step down one more time
+			  new_freq = new_freq - 100000;
+			  __cpufreq_driver_target(policy, new_freq, relation);
+			  this_superbad->freq_change_time_in_idle =
+					get_cpu_idle_time_us(cpu,&this_superbad->freq_change_time);
+			} 
+			if (relation == CPUFREQ_RELATION_H && old_freq == policy->cur) {
+			  // step up one more time
+			  new_freq = new_freq + 100000;
+			  __cpufreq_driver_target(policy, new_freq, relation);
+			  this_superbad->freq_change_time_in_idle =
+					get_cpu_idle_time_us(cpu,&this_superbad->freq_change_time);
+			} 
                 }
 
                 cpumask_clear_cpu(cpu, &work_cpumask);
@@ -643,7 +643,7 @@ static void superbad_suspend(int cpu, int suspend)
 
         superbad_update_min_max(this_superbad,policy,suspend);
         if (!suspend) { // resume at max speed:
-suspended=0;
+		suspended=0;
                 new_freq = validate_freq(this_superbad,sleep_wakeup_freq);
 
                 if (debug_mask & SUPERBAD_DEBUG_JUMPS)
@@ -654,7 +654,7 @@ suspended=0;
 
                 if (policy->cur < this_superbad->max_speed && !timer_pending(&this_superbad->timer))
                         reset_timer(smp_processor_id(),this_superbad);
-         pr_info("[imoseyon] superbad awake at %d\n", policy->cur);
+        	pr_info("[imoseyon] superbad awake at %d\n", policy->cur);
         } else {
                 // to avoid wakeup issues with quick sleep/wakeup don't change actual frequency when entering sleep
                 // to allow some time to settle down.
@@ -666,9 +666,9 @@ suspended=0;
 
                 if (debug_mask & SUPERBAD_DEBUG_JUMPS)
                         printk(KERN_INFO "SmartassS: suspending at %d\n",policy->cur);
-__cpufreq_driver_target(policy, suspendfreq, CPUFREQ_RELATION_H);
-         pr_info("[imoseyon] superbad suspending with %d\n", policy->cur);
-suspended=1;
+		__cpufreq_driver_target(policy, suspendfreq, CPUFREQ_RELATION_H);
+        	pr_info("[imoseyon] superbad suspending with %d\n", policy->cur);
+		suspended=1;
         }
 }
 
@@ -687,7 +687,7 @@ static void superbad_late_resume(struct early_suspend *handler) {
 static struct early_suspend superbad_power_suspend = {
         .suspend = superbad_early_suspend,
         .resume = superbad_late_resume,
-.level = EARLY_SUSPEND_LEVEL_DISABLE_FB + 1,
+	.level = EARLY_SUSPEND_LEVEL_DISABLE_FB + 1,
 };
 
 static int cpufreq_governor_superbad(struct cpufreq_policy *new_policy,
@@ -703,9 +703,9 @@ static int cpufreq_governor_superbad(struct cpufreq_policy *new_policy,
                         return -EINVAL;
 
                 /*
-* Do not register the idle hook and create sysfs
-* entries if we have already done so.
-*/
+                 * Do not register the idle hook and create sysfs
+                 * entries if we have already done so.
+                 */
                 if (atomic_inc_return(&active_count) <= 1) {
                         rc = sysfs_create_group(&new_policy->kobj, &superbad_attr_group);
                         if (rc)
@@ -717,9 +717,9 @@ static int cpufreq_governor_superbad(struct cpufreq_policy *new_policy,
                 this_superbad->cur_policy = new_policy;
                 this_superbad->enable = 1;
 
-// imoseyon - should only register for suspend when governor active
-         register_early_suspend(&superbad_power_suspend);
-         pr_info("[imoseyon] superbad active\n");
+		// imoseyon - should only register for suspend when governor active
+        	register_early_suspend(&superbad_power_suspend); 
+        	pr_info("[imoseyon] superbad active\n");
 
                 // notice no break here!
 
@@ -742,9 +742,9 @@ static int cpufreq_governor_superbad(struct cpufreq_policy *new_policy,
                                 &superbad_attr_group);
 
                 pm_idle = pm_idle_old;
-// unregister when governor exits
-         unregister_early_suspend(&superbad_power_suspend);
-         pr_info("[imoseyon] superbad inactive\n");
+		// unregister when governor exits
+        	unregister_early_suspend(&superbad_power_suspend);
+        	pr_info("[imoseyon] superbad inactive\n");
                 break;
         }
 
@@ -770,7 +770,7 @@ static int __init cpufreq_superbad_init(void)
         max_cpu_load = DEFAULT_MAX_CPU_LOAD;
         x_cpu_load = DEFAULT_X_CPU_LOAD;
         min_cpu_load = DEFAULT_MIN_CPU_LOAD;
-rapid_min_cpu_load = RAPID_MIN_CPU_LOAD;
+	rapid_min_cpu_load = RAPID_MIN_CPU_LOAD;
 
         suspended = 0;
 
@@ -794,8 +794,8 @@ rapid_min_cpu_load = RAPID_MIN_CPU_LOAD;
         }
 
         /* Scale up is high priority */
-up_wq = create_rt_workqueue("ksmartass_up");
-down_wq = create_workqueue("ksmartass_down");
+	up_wq = create_rt_workqueue("ksmartass_up");
+	down_wq = create_workqueue("ksmartass_down");
 
         INIT_WORK(&freq_scale_work, cpufreq_superbad_freq_change_time_work);
 
@@ -823,3 +823,4 @@ module_exit(cpufreq_superbad_exit);
 MODULE_AUTHOR ("Erasmux/imoseyon");
 MODULE_DESCRIPTION ("'cpufreq_superbad' - A super smart cpufreq governor optimized for the GLACIER!");
 MODULE_LICENSE ("GPL");
+
