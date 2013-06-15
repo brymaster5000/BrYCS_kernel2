@@ -199,7 +199,6 @@ o	"ci" is the number of RCU callbacks that have been invoked for
 o	"co" is the number of RCU callbacks that have been orphaned due to
 	this CPU going offline.  These orphaned callbacks have been moved
 	to an arbitrarily chosen online CPU.
-	this CPU going offline.
 
 o	"ca" is the number of RCU callbacks that have been adopted due to
 	other CPUs going offline.  Note that ci+co-ca+ql is the number of
