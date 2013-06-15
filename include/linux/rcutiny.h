@@ -68,6 +68,8 @@ extern void call_rcu_sched(struct rcu_head *head,
 
 #define rcu_init_sched()	do { } while (0)
 
+extern void synchronize_sched(void);
+
 #ifdef CONFIG_TINY_RCU
 
 #define call_rcu		call_rcu_sched
@@ -110,6 +112,7 @@ static inline void rcu_barrier(void)
 
 #else /* #ifdef CONFIG_TINY_RCU */
 
+void synchronize_rcu(void);
 void rcu_barrier(void);
 void synchronize_rcu_expedited(void);
 
@@ -213,6 +216,8 @@ static inline void rcu_note_context_switch(int cpu)
 	rcu_sched_qs(cpu);
 	rcu_preempt_note_context_switch();
 }
+
+extern void rcu_check_callbacks(int cpu, int user);
 
 /*
  * Return the number of grace periods.
