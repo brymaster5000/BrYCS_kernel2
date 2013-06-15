@@ -410,11 +410,6 @@ void __rcu_read_unlock(void)
 		barrier();  /* ->rcu_read_unlock_special load before assign */
 		t->rcu_read_lock_nesting = 0;
 	}
-	--t->rcu_read_lock_nesting;
-	barrier();  /* decrement before load of ->rcu_read_unlock_special */
-	if (t->rcu_read_lock_nesting == 0 &&
-	    unlikely(ACCESS_ONCE(t->rcu_read_unlock_special)))
-		rcu_read_unlock_special(t);
 #ifdef CONFIG_PROVE_LOCKING
 	{
 		int rrln = ACCESS_ONCE(t->rcu_read_lock_nesting);
