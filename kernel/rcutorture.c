@@ -132,7 +132,6 @@ struct rcu_torture {
 static LIST_HEAD(rcu_torture_freelist);
 static struct rcu_torture __rcu *rcu_torture_current;
 static unsigned long rcu_torture_current_version;
-static long rcu_torture_current_version;
 static struct rcu_torture rcu_tortures[10 * RCU_TORTURE_PIPE_LEN];
 static DEFINE_SPINLOCK(rcu_torture_lock);
 static DEFINE_PER_CPU(long [RCU_TORTURE_PIPE_LEN + 1], rcu_torture_count) =
