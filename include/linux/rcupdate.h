@@ -152,18 +152,6 @@ static inline void rcu_exit_nohz(void)
 
 #endif /* #else #ifdef CONFIG_NO_HZ */
 
-#ifdef CONFIG_PREEMPT_RCU
-
-/*
- * Defined as a macro as it is a very low level header included from
- * areas that don't even know about current.  This gives the rcu_read_lock()
- * nesting depth, but makes sense only if CONFIG_PREEMPT_RCU -- in other
- * types of kernel builds, the rcu_read_lock() nesting depth is unknowable.
- */
-#define rcu_preempt_depth() (current->rcu_read_lock_nesting)
-
-#endif /* #ifdef CONFIG_PREEMPT_RCU */
-
 #if defined(CONFIG_TREE_RCU) || defined(CONFIG_TREE_PREEMPT_RCU)
 #include <linux/rcutree.h>
 #elif defined(CONFIG_TINY_RCU) || defined(CONFIG_TINY_PREEMPT_RCU)

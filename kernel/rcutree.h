@@ -340,7 +340,6 @@ do {									\
 	}								\
 	__set_current_state(TASK_RUNNING);				\
 } while (0)
-#endif /* #ifdef CONFIG_RCU_CPU_STALL_DETECTOR */
 
 /*
  * RCU global state, including node hierarchy.  This hierarchy is

@@ -41,9 +41,6 @@ extern void rcu_cpu_stall_reset(void);
  * to save a few bytes.
  */
 static inline void rcu_virt_note_context_switch(int cpu)
-#else /* #ifdef CONFIG_TREE_PREEMPT_RCU */
-
-static inline void __rcu_read_lock(void)
 {
 	rcu_note_context_switch(cpu);
 }
