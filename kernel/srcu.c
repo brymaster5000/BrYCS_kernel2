@@ -223,11 +223,6 @@ static void __synchronize_srcu(struct srcu_struct *sp, void (*sync_func)(void))
 
 	if (srcu_readers_active_idx(sp, idx))
 		udelay(SYNCHRONIZE_SRCU_READER_DELAY);
-	 * seconds per iteration.
-	 */
-
-	if (srcu_readers_active_idx(sp, idx))
-		udelay(CONFIG_SRCU_SYNCHRONIZE_DELAY);
 	while (srcu_readers_active_idx(sp, idx))
 		schedule_timeout_interruptible(1);
 
