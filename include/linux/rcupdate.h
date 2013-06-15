@@ -863,7 +863,6 @@ static inline void debug_rcu_head_unqueue(struct rcu_head *head)
 				  STATE_RCU_HEAD_READY);
 	debug_object_deactivate(head, &rcuhead_debug_descr);
 }
-#else	/* !CONFIG_DEBUG_OBJECTS_RCU_HEAD */
         debug_object_active_state(head, &rcuhead_debug_descr,
                                   STATE_RCU_HEAD_QUEUED,
                                   STATE_RCU_HEAD_READY);
@@ -934,6 +933,5 @@ static inline void __rcu_reclaim(struct rcu_head *head)
  */
 #define kfree_rcu(ptr, rcu_head)					\
 	__kfree_rcu(&((ptr)->rcu_head), offsetof(typeof(*(ptr)), rcu_head))
-#endif  /* #else !CONFIG_DEBUG_OBJECTS_RCU_HEAD */
 
 #endif /* __LINUX_RCUPDATE_H */
