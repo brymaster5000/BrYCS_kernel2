@@ -58,12 +58,10 @@ static struct task_struct *rcu_cbs_task;
 static DECLARE_WAIT_QUEUE_HEAD(rcu_cbs_wq);
 static unsigned long have_rcu_cbs;
 static void invoke_rcu_cbs(void);
-static void invoke_rcu_kthread(void);
 
 /* Forward declarations for rcutiny_plugin.h. */
-struct rcu_ctrlblk;
 static void rcu_process_callbacks(struct rcu_ctrlblk *rcp);
-static int rcu_kthread(void *arg);
+static int rcu_cbs(void *arg);
 static void __call_rcu(struct rcu_head *head,
 		       void (*func)(struct rcu_head *rcu),
 		       struct rcu_ctrlblk *rcp);
@@ -134,10 +132,12 @@ void rcu_sched_qs(int cpu)
 	local_irq_save(flags);
 	if (rcu_qsctr_help(&rcu_sched_ctrlblk) +
 	    rcu_qsctr_help(&rcu_bh_ctrlblk))
+<<<<<<< HEAD
 		invoke_rcu_kthread();
 	local_irq_restore(flags);
+=======
 		invoke_rcu_cbs();
-		invoke_rcu_kthread();
+>>>>>>> 22677b7... rcu: move TINY_RCU from softirq to kthread
 }
 
 /*
@@ -149,10 +149,12 @@ void rcu_bh_qs(int cpu)
 
 	local_irq_save(flags);
 	if (rcu_qsctr_help(&rcu_bh_ctrlblk))
+<<<<<<< HEAD
 		invoke_rcu_kthread();
 	local_irq_restore(flags);
+=======
 		invoke_rcu_cbs();
-		invoke_rcu_kthread();
+>>>>>>> 22677b7... rcu: move TINY_RCU from softirq to kthread
 }
 
 /*
@@ -202,8 +204,11 @@ static void rcu_process_callbacks(struct rcu_ctrlblk *rcp)
 		prefetch(next);
 		debug_rcu_head_unqueue(list);
 		local_bh_disable();
+<<<<<<< HEAD
 		__rcu_reclaim(list);
+=======
 		list->func(list);
+>>>>>>> 22677b7... rcu: move TINY_RCU from softirq to kthread
 		local_bh_enable();
 		list = next;
 		RCU_TRACE(cb_count++);
@@ -217,6 +222,7 @@ static void rcu_process_callbacks(struct rcu_ctrlblk *rcp)
  * RCU_SOFTIRQ that was used previously for this purpose.
  * This is a kthread, but it is never stopped, at least not until
  * the system goes down.
+<<<<<<< HEAD
  */
 static int rcu_kthread(void *arg)
 {
@@ -244,43 +250,41 @@ static int rcu_kthread(void *arg)
 	__rcu_process_callbacks(&rcu_sched_ctrlblk);
 	__rcu_process_callbacks(&rcu_bh_ctrlblk);
 	rcu_preempt_process_callbacks();
+=======
  */
-static int rcu_kthread(void *arg)
+static int rcu_cbs(void *arg)
 {
 	unsigned long work;
-	unsigned long morework;
 	unsigned long flags;
 
 	for (;;) {
-		wait_event(rcu_kthread_wq, have_rcu_kthread_work != 0);
-		morework = rcu_boost();
+		wait_event(rcu_cbs_wq, have_rcu_cbs != 0);
 		local_irq_save(flags);
-		work = have_rcu_kthread_work;
-		have_rcu_kthread_work = morework;
+		work = have_rcu_cbs;
+		have_rcu_cbs = 0;
 		local_irq_restore(flags);
 		if (work) {
 			rcu_process_callbacks(&rcu_sched_ctrlblk);
 			rcu_process_callbacks(&rcu_bh_ctrlblk);
 			rcu_preempt_process_callbacks();
 		}
-		schedule_timeout_interruptible(1); /* Leave CPU for others. */
 	}
 
 	return 0;  /* Not reached, but needed to shut gcc up. */
 }
 
 /*
- * Wake up rcu_kthread() to process callbacks now eligible for invocation
- * or to boost readers.
+ * Wake up rcu_cbs() to process callbacks now eligible for invocation.
  */
-static void invoke_rcu_kthread(void)
+static void invoke_rcu_cbs(void)
 {
 	unsigned long flags;
 
 	local_irq_save(flags);
-	have_rcu_kthread_work = 1;
-	wake_up(&rcu_kthread_wq);
+	have_rcu_cbs = 1;
+	wake_up(&rcu_cbs_wq);
 	local_irq_restore(flags);
+>>>>>>> 22677b7... rcu: move TINY_RCU from softirq to kthread
 }
 
 /*
