@@ -14,7 +14,7 @@
  * destructors.
  */
 
-#ifndef _LINUX_KOBJECT_NS_H
+#ifdef _LINUX_KOBJECT_NS_H
 #define _LINUX_KOBJECT_NS_H
 
 struct sock;

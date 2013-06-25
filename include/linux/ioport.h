@@ -5,7 +5,7 @@
  * Authors:	Linus Torvalds
  */
 
-#ifndef _LINUX_IOPORT_H
+#ifdef _LINUX_IOPORT_H
 #define _LINUX_IOPORT_H
 
 #ifndef __ASSEMBLY__

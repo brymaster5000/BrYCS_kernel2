@@ -1,4 +1,4 @@
-#ifndef __LINUX_BIT_SPINLOCK_H
+#ifdef __LINUX_BIT_SPINLOCK_H
 #define __LINUX_BIT_SPINLOCK_H
 
 #include <linux/kernel.h>

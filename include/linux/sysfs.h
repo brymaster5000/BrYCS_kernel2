@@ -9,7 +9,7 @@
  * Please see Documentation/filesystems/sysfs.txt for more information.
  */
 
-#ifndef _SYSFS_H_
+#ifdef _SYSFS_H_
 #define _SYSFS_H_
 
 #include <linux/compiler.h>

@@ -12,7 +12,7 @@
  *
  */
 
-#ifndef _KREF_H_
+#ifdef _KREF_H_
 #define _KREF_H_
 
 #include <linux/types.h>

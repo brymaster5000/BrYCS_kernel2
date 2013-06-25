@@ -40,10 +40,10 @@
 /* SCHED_ISO: Implemented on BFS only */
 #define SCHED_IDLE		5
 #ifdef CONFIG_SCHED_BFS
-#define SCHED_ISO    4
-#define SCHED_IDLEPRIO    SCHED_IDLE
-#define SCHED_MAX    (SCHED_IDLEPRIO)
-#define SCHED_RANGE(policy)  ((policy) <= SCHED_MAX)
+#define SCHED_ISO		4
+#define SCHED_IDLEPRIO		SCHED_IDLE
+#define SCHED_MAX		(SCHED_IDLEPRIO)
+#define SCHED_RANGE(policy)	((policy) <= SCHED_MAX)
 #endif
 #endif
 
@@ -1234,24 +1234,24 @@ struct task_struct {
 	struct task_struct *wake_entry;
 #endif
 #if defined(CONFIG_SMP) || defined(CONFIG_SCHED_BFS)
-  bool on_cpu;
+	bool on_cpu;
 #endif
 #ifndef CONFIG_SCHED_BFS
-  bool on_rq;
+	bool on_rq;
 #endif
  
-   int prio, static_prio, normal_prio;
-   unsigned int rt_priority;
+ 	int prio, static_prio, normal_prio;
+ 	unsigned int rt_priority;
 #ifdef CONFIG_SCHED_BFS
-  int time_slice;
-  u64 deadline;
-  struct list_head run_list;
-  u64 last_ran;
-  u64 sched_time; /* sched_clock time spent running */
+	int time_slice;
+	u64 deadline;
+	struct list_head run_list;
+	u64 last_ran;
+	u64 sched_time; /* sched_clock time spent running */
 #ifdef CONFIG_SMP
-  bool sticky; /* Soft affined flag */
+	bool sticky; /* Soft affined flag */
 #endif
-  unsigned long rt_timeout;
+	unsigned long rt_timeout;
 #else /* CONFIG_SCHED_BFS */
 	const struct sched_class *sched_class;
 	struct sched_entity se;
@@ -1366,7 +1366,7 @@ struct task_struct {
 
 	cputime_t utime, stime, utimescaled, stimescaled;
 #ifdef CONFIG_SCHED_BFS
-  unsigned long utime_pc, stime_pc;
+	unsigned long utime_pc, stime_pc;
 #endif
 	cputime_t gtime;
 #ifndef CONFIG_VIRT_CPU_ACCOUNTING
@@ -1602,8 +1602,8 @@ void grq_unlock_wait(void);
 void cpu_scaling(int cpu);
 void cpu_nonscaling(int cpu);
 bool above_background_load(void);
-#define tsk_seruntime(t)    ((t)->sched_time)
-#define tsk_rttimeout(t)    ((t)->rt_timeout)
+#define tsk_seruntime(t)		((t)->sched_time)
+#define tsk_rttimeout(t)		((t)->rt_timeout)
 
 static inline void tsk_cpus_current(struct task_struct *p)
 {
@@ -1611,14 +1611,14 @@ static inline void tsk_cpus_current(struct task_struct *p)
 
 static inline int runqueue_is_locked(int cpu)
 {
-  return grunqueue_is_locked();
+	return grunqueue_is_locked();
 }
 
 void print_scheduler_version(void);
 
 static inline bool iso_task(struct task_struct *p)
 {
-  return (p->policy == SCHED_ISO);
+	return (p->policy == SCHED_ISO);
 }
 #else /* CFS */
 extern int runqueue_is_locked(int cpu);
@@ -1629,31 +1629,31 @@ static inline void cpu_scaling(int cpu)
 static inline void cpu_nonscaling(int cpu)
 {
 }
-#define tsk_seruntime(t)  ((t)->se.sum_exec_runtime)
-#define tsk_rttimeout(t)  ((t)->rt.timeout)
+#define tsk_seruntime(t)	((t)->se.sum_exec_runtime)
+#define tsk_rttimeout(t)	((t)->rt.timeout)
 
 static inline void tsk_cpus_current(struct task_struct *p)
 {
-  p->nr_cpus_allowed = current->nr_cpus_allowed;
+	p->nr_cpus_allowed = current->nr_cpus_allowed;
 }
 
 static inline void print_scheduler_version(void)
 {
-  printk(KERN_INFO"CFS CPU scheduler.\n");
+	printk(KERN_INFO"CFS CPU scheduler.\n");
 }
 
 static inline bool iso_task(struct task_struct *p)
 {
-  return false;
+	return false;
 }
 
 /* Anyone feel like implementing this? */
 static inline bool above_background_load(void)
 {
-  return false;
+	return false;
 }
 #endif /* CONFIG_SCHED_BFS */
- 
+
 /* Future-safe accessor for struct task_struct's cpus_allowed. */
 #define tsk_cpus_allowed(tsk) (&(tsk)->cpus_allowed)
 
@@ -1927,7 +1927,6 @@ static inline void rcu_copy_process(struct task_struct *p)
 #ifdef CONFIG_RCU_BOOST
 	p->rcu_boost_mutex = NULL;
 #endif /* #ifdef CONFIG_RCU_BOOST */
-#endif
 	INIT_LIST_HEAD(&p->rcu_node_entry);
 }
 
@@ -2785,3 +2784,6 @@ static inline unsigned long rlimit_max(unsigned int limit)
 }
 
 #endif /* __KERNEL__ */
+
+#endif
+
