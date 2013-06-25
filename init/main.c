@@ -695,6 +695,7 @@ int __init_or_module do_one_initcall(initcall_t fn)
 	return ret;
 }
 
+
 extern initcall_t __initcall_start[], __initcall_end[], __early_initcall_end[];
 
 static void __init do_initcalls(void)
@@ -751,8 +752,6 @@ static noinline int init_post(void)
 
 
 	current->signal->flags |= SIGNAL_UNKILLABLE;
-
-	print_scheduler_version();
 
 	if (ramdisk_execute_command) {
 		run_init_process(ramdisk_execute_command);
