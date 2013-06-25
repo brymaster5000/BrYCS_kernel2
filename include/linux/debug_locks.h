@@ -1,4 +1,4 @@
-#ifdef __LINUX_DEBUG_LOCKING_H
+#ifndef __LINUX_DEBUG_LOCKING_H
 #define __LINUX_DEBUG_LOCKING_H
 
 #include <linux/kernel.h>

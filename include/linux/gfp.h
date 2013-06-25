@@ -1,4 +1,4 @@
-#ifdef __LINUX_GFP_H
+#ifndef __LINUX_GFP_H
 #define __LINUX_GFP_H
 
 #include <linux/mmzone.h>

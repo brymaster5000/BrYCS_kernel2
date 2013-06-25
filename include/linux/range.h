@@ -1,4 +1,4 @@
-#ifdef _LINUX_RANGE_H
+#ifndef _LINUX_RANGE_H
 #define _LINUX_RANGE_H
 
 struct range {
