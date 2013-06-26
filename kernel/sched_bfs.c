@@ -3885,6 +3885,12 @@ recheck:
 				case SCHED_BATCH:
 					if (policy == SCHED_BATCH)
 						goto out;
+				        /*
+           				 * ANDROID: Allow tasks to move between
+           				 * SCHED_NORMAL <-> SCHED_BATCH
+           			 	 */
+          				if (policy == SCHED_NORMAL)
+           				  break;
 					if (policy != SCHED_IDLEPRIO)
 						return -EPERM;
 					break;
