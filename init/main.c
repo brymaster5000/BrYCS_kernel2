@@ -347,7 +347,7 @@ static __initdata DECLARE_COMPLETION(kthreadd_done);
 static noinline void __init_refok rest_init(void)
 {
 	int pid;
-	const struct sched_param param = { .sched_priority = 1 };
+	struct sched_param param = { .sched_priority = 1 };
 
 	rcu_scheduler_starting();
 	/*
