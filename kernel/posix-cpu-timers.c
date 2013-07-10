@@ -1280,7 +1280,7 @@ static inline int fastpath_timer_check(struct task_struct *tsk)
 		struct task_cputime task_sample = {
 			.utime = tsk->utime,
 			.stime = tsk->stime,
-			.sum_exec_runtime = tsk_seruntime(t)
+			.sum_exec_runtime = tsk_seruntime(tsk)
 		};
 
 		if (task_cputime_expired(&task_sample, &tsk->cputime_expires))
