@@ -2612,7 +2612,7 @@ void scheduler_tick(void)
 	else
 		no_iso_tick();
 	rq->last_tick = rq->clock;
-	perf_event_task_tick();
+	perf_event_task_tick(rq->curr);
 }
 
 notrace unsigned long get_parent_ip(unsigned long addr)
@@ -3414,7 +3414,7 @@ EXPORT_SYMBOL(wait_for_completion_interruptible);
  * This waits for either a completion of a specific task to be signaled or for a
  * specified timeout to expire. It is interruptible. The timeout is in jiffies.
  */
-long __sched
+unsigned long __sched
 wait_for_completion_interruptible_timeout(struct completion *x,
 					  unsigned long timeout)
 {
@@ -3447,7 +3447,7 @@ EXPORT_SYMBOL(wait_for_completion_killable);
  * signaled or for a specified timeout to expire. It can be
  * interrupted by a kill signal. The timeout is in jiffies.
  */
-long __sched
+unsigned long __sched
 wait_for_completion_killable_timeout(struct completion *x,
 				     unsigned long timeout)
 {
@@ -3912,7 +3912,7 @@ recheck:
 			return -EPERM;
 	}
 
-	retval = security_task_setscheduler(task_struct *, sched_param *);
+	retval = security_task_setscheduler(p, policy, param);
 	if (retval)
 		return retval;
 	/*

@@ -144,6 +144,7 @@ extern struct cred init_cred;
   .stack    = &init_thread_info,        \
   .usage    = ATOMIC_INIT(2),        \
   .flags    = PF_KTHREAD,          \
+  .lock_depth  = -1,            \
   .prio    = NORMAL_PRIO,          \
   .static_prio  = MAX_PRIO-20,          \
   .normal_prio  = NORMAL_PRIO,          \
@@ -155,6 +156,7 @@ extern struct cred init_cred;
   .run_list  = LIST_HEAD_INIT(tsk.run_list),      \
   .time_slice  = HZ,          \
   .tasks    = LIST_HEAD_INIT(tsk.tasks),      \
+  .pushable_tasks = PLIST_NODE_INIT(tsk.pushable_tasks, MAX_PRIO), \
   .ptraced  = LIST_HEAD_INIT(tsk.ptraced),      \
   .ptrace_entry  = LIST_HEAD_INIT(tsk.ptrace_entry),    \
   .real_parent  = &tsk,            \
@@ -164,6 +166,8 @@ extern struct cred init_cred;
   .group_leader  = &tsk,            \
   .real_cred  = &init_cred,          \
   .cred    = &init_cred,          \
+  .cred_guard_mutex =            \
+     __MUTEX_INITIALIZER(tsk.cred_guard_mutex),    \
   .comm    = "swapper",          \
   .thread    = INIT_THREAD,          \
   .fs    = &init_fs,          \
