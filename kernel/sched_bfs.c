@@ -3912,7 +3912,7 @@ recheck:
 			return -EPERM;
 	}
 
-	retval = security_task_setscheduler(p);
+	retval = security_task_setscheduler(task_struct *, sched_param *);
 	if (retval)
 		return retval;
 	/*
@@ -3959,8 +3959,8 @@ out:
  *
  * NOTE that the task may be already dead.
  */
-int sched_setscheduler(struct task_struct *, int,
-		       const struct sched_param *)
+int sched_setscheduler(struct task_struct *p, int policy,
+		       struct sched_param *param)
 {
 	return __sched_setscheduler(p, policy, param, true);
 }
