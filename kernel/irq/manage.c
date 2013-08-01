@@ -787,7 +787,7 @@ static irqreturn_t irq_thread_fn(struct irq_desc *desc,
  */
 static int irq_thread(void *data)
 {
-	struct sched_param param = {
+	static const struct sched_param param = {
 		.sched_priority = MAX_USER_RT_PRIO/2,
 	};
 	struct irqaction *action = data;
