@@ -3959,8 +3959,8 @@ out:
  *
  * NOTE that the task may be already dead.
  */
-int sched_setscheduler(struct task_struct *p, int policy,
-		       struct sched_param *param)
+int sched_setscheduler(struct task_struct *, int,
+		       const struct sched_param *)
 {
 	return __sched_setscheduler(p, policy, param, true);
 }
@@ -4130,7 +4130,7 @@ long sched_setaffinity(pid_t pid, const struct cpumask *in_mask)
 	if (!check_same_owner(p) && !capable(CAP_SYS_NICE))
 		goto out_unlock;
 
-	retval = security_task_setscheduler(p);
+	retval = security_task_setscheduler(p, 0, NULL);
 	if (retval)
 		goto out_unlock;
 
