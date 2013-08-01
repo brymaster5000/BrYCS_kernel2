@@ -454,7 +454,6 @@ static int oom_kill_task(struct task_struct *p, struct mem_cgroup *mem)
 			force_sig(SIGKILL, q);
 		}
 
-	set_oom_timeslice(p);
 	set_tsk_thread_flag(p, TIF_MEMDIE);
 	force_sig(SIGKILL, p);
 
